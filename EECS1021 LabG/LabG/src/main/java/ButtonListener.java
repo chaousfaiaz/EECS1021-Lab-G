@@ -5,6 +5,9 @@ import org.firmata4j.Pin;
 import java.io.IOException;
 
 import java.text.DecimalFormat;
+import java.util.Random;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class ButtonListener implements IODeviceEventListener {
     private final Pin ledPin; //note that a FINAL attribute can't be changed once initialized
@@ -22,7 +25,10 @@ public class ButtonListener implements IODeviceEventListener {
      */
     ButtonListener(Pin ledPin, Pin buttonPin) {
         //write your code here
-        throw new UnsupportedOperationException(); //replace this line!
+        this.ledPin = ledPin;
+        this.buttonPin = buttonPin;
+        this.tosses = new boolean[1000];
+         //replace this line!
     }
 
     /**
@@ -42,10 +48,22 @@ public class ButtonListener implements IODeviceEventListener {
         if (event.getPin().getIndex() != buttonPin.getIndex()) {
             return;
         }
-
+try{
+    int ledState = (int) ledPin.getValue();
+    if(ledState == 1){
+        simulateCoinTosses();
+        ledPin.setValue(0);
+    }else{
+        ledPin.setValue(1);
+        System.out.printf("The current percentage heads is %.2f%%%n",getPercentHeads());
+    }
+}catch(IOException e){e.printStackTrace();}
+    }
+    
+        
         //WRITE YOUR CODE HERE
 
-    }
+    
 
     /**
      * Simulate 1000 coin tosses.
@@ -57,7 +75,10 @@ public class ButtonListener implements IODeviceEventListener {
      */
     public void simulateCoinTosses() {
         //WRITE YOUR CODE HERE
-        throw new UnsupportedOperationException(); //replace this line!
+        Random random = new Random();
+        for(int i = 0; i<tosses.length; i++){
+            tosses[i] = random.nextBoolean();
+        }//replace this line!
     }
 
     /**
@@ -70,7 +91,13 @@ public class ButtonListener implements IODeviceEventListener {
      */
     public double getPercentHeads( ) {
         //WRITE YOUR CODE HERE
-        throw new UnsupportedOperationException(); //replace this line!
+        int headcount = 0;
+        for(boolean toss : tosses){
+            if(toss){
+                headscount++;
+            }
+        }
+        double percentheads = (double) headscount/tosses.length)*100;//replace this line!
     }
 
     /* BELOW ARE ADDITIONAL METHODS from the IODeviceEventListener interface.
