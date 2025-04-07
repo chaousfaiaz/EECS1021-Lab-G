@@ -6,14 +6,14 @@ import java.io.IOException;
 
 public class ButtonApp {
 
-    private final String myPort = "/dev/cu.SLAB_USBtoUART"; // modify for your own computer & setup.
+    private final String myPort = "/dev/cv.usbserial-0001"; // modify for your own computer & setup.
     private IODevice myGroveBoard;
     private ButtonListener theButtonListener;
 
     /**
      * Constructor for a ButtonApp
      */
-    public ButtonApp() {
+    public ButtonApp() throws IOException {
 
         this.myGroveBoard = new FirmataDevice(this.myPort);
 
@@ -25,6 +25,13 @@ public class ButtonApp {
             System.out.println("couldn't connect to board.");
             return; //no point continuing at this point.
         }
+        Pin ledPin = myGroveBoard.getPin(4);
+        Pin buttonPin = myGroveBoard.getPin(6);
+        ledPin.setMode(Pin.Mode.OUTPUT);
+        buttonPin.setMode(Pin.Mode.INPUT);
+        this.theButtonListener = new ButtonListener(ledPin, buttonPin);
+        myGroveBoard.addEventListener(theButtonListener);
+    }
 
         //In the space below:
         //1. Initialize two Pin objects
@@ -33,7 +40,7 @@ public class ButtonApp {
         //3. Initialize a this.theButtonListener with a new ButtonListener.  Use the Pins you initialized as arguments.
         //4. Add this.theButtonListener as an addEventListener to myGroveBoard
 
-    }
+    
 
     /**
      * Stop the Board
@@ -45,7 +52,13 @@ public class ButtonApp {
 
 
     public static void main(String[] args) {
-
+try{
+        ButtonApp p = new ButtonApp();
+        System.out.println("Button App running, Press Button to toggle LED");
+        while(true){ Thread.sleep(1000);}
+    }catch(IOException | InterruptedException e){
+    System.out.println("An error occurred: " + e.getMessage());
+}
     }
 
 
